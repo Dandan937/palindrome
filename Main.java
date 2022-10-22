@@ -19,7 +19,7 @@ public class Main
 		System.out.println("Hello World");
 		// initialize objects
     File puzzle = new File("PalindromePuzzle.txt");
-    Scanner input = new Scanner(puzzle);
+    Scanner input2 = new Scanner(puzzle);
     // File updatedRecords = new File("updatedRecords.txt");
     // PrintWriter output = new PrintWriter(updatedRecords);
 
