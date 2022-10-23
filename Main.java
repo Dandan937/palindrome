@@ -51,8 +51,15 @@ public class Main
     }
 
     // creates the 2d array of the solved puzzle board that the program will output
+    // and fills the array with blank spaces
     char[][] solBoard = new char[lineCount][lineLength];
+    for (int row = 0; row < lineCount; row++) {
+      for (int column = 0; column < lineLength; column++) {
+        Arrays.fill(solBoard[row], column, column+1, ' ');
+      }
+    }
 
+    // searches row by row for horizontal palindromes
     for (int row = 0; row < lineCount; row++) {
       for (int startingLetter = 0; startingLetter < lineLength; startingLetter++) {
         String word = "";
@@ -80,6 +87,7 @@ public class Main
       System.out.println(Arrays.toString(board[ar]));
     }
 
+    // makes a filler line
     System.out.println("");
     // prints the solution board for debugging purposes
     for (int sar = 0; sar < lineCount; sar++) {
@@ -89,10 +97,17 @@ public class Main
     // // Fill from index 1 to index 4.
     // Arrays.fill(ar, 1, 5, 10);
     // System.out.println(Arrays.toString(ar));
+
+    // close the puzzle reader stream
     input.close();
 	}
 
   public static boolean palindrome(String str) {
+    /* 
+     * function: checks if the string of characters found is a palindrome or not
+     * parameters: String str
+     * returns: boolean mirrored
+    */
     int mirroredness = 0;
     boolean mirrored = false;
     if (str.length() >= 3) {
