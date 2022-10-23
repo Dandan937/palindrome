@@ -1,11 +1,11 @@
-/******************************************************************************
+/*
+ * [PalindromeSolver.java]
+ * Oct 18 and 24 Array File Methods Assignment - Palindrome Solver
+ * @authors: Daniel Liu
+ * @version: October 23 2022
+ * @IPO table: https://docs.google.com/document/d/1udfRLSj27_CvNhCJzQYOb741Vf55JOTCILKuykDsvhc/edit?usp=sharing
+ */
 
-Welcome to GDB Online.
-GDB online is an online compiler and debugger tool for C, C++, Python, Java, PHP, Ruby, Perl,
-C#, OCaml, VB, Swift, Pascal, Fortran, Haskell, Objective-C, Assembly, HTML, CSS, JS, SQLite, Prolog.
-Code, Compile, Run and Debug online from anywhere in world.
-
-*******************************************************************************/
 // import classes
 import java.util.Scanner;
 import java.lang.Math;
@@ -15,9 +15,9 @@ import java.io.PrintWriter;
 
 public class Main
 {
-	public static void main(String[] args) throws Exception {
-		System.out.println("Hello World");
-		// initialize objects
+ public static void main(String[] args) throws Exception {
+  System.out.println("Hello World");
+  // initialize objects
     File puzzle = new File("PalindromePuzzle.txt");
     Scanner input2 = new Scanner(puzzle);
     // File updatedPuzzle = new File("updatedPuzzle.txt");
@@ -60,31 +60,7 @@ public class Main
     }
 
     // searches row by row for horizontal palindromes
-    for (int row = 0; row < lineCount; row++) {
-      for (int startingLetter = 0; startingLetter < lineLength; startingLetter++) {
-        String word = "";
-        for (int endingLetter = 1; endingLetter < lineLength; endingLetter++) {
-          word = "";
-          for (int letter = startingLetter; letter < endingLetter+1; letter++) {
-            if (startingLetter+endingLetter >= lineLength) {
-              word = word + board[row][letter-6];
-            } else {
-              word = word + board[row][letter];
-              if (palindrome(word) == true) {
-                System.out.println("words: "+word);
-                System.out.println("PALINDROME FOUND!");
-                for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-                  Arrays.fill(solBoard[row],startingLetter+charInWord,startingLetter+charInWord+1,word.charAt(charInWord));
-                }
-              }
-            }
-          }
-          // System.out.println("new ending letter");
-        }
-        // System.out.println("new starting letter");
-      }
-      System.out.println("new row");
-    }
+    searchH(lineCount, lineLength, board, solBoard);
     
     // prints the board for debugging purposes
     for (int ar = 0; ar < lineCount; ar++) {
@@ -104,7 +80,7 @@ public class Main
 
     // close the puzzle reader stream
     input.close();
-	}
+ }
 
   public static boolean palindrome(String str) {
     /* 
@@ -119,11 +95,43 @@ public class Main
         if (str.charAt(letter) == str.charAt(str.length()-letter-1)) {
           mirroredness = mirroredness + 1;
         }
+        // System.out.print(str.charAt(letter) +" w1 - "+str.charAt(str.length()-letter-1)+" w2 ___ ");
       }
     }
     if (mirroredness == str.length()) {
       mirrored = true;
     }
+    // System.out.println(" "+mirroredness+" "+str.length());
     return mirrored;
+  }
+
+  public static void searchH(int rows, int columns, char[][] ar, char[][] solAr) {
+    for (int row = 0; row < rows; row++) {
+      for (int startingLetter = 0; startingLetter < columns; startingLetter++) {
+        String word = "";
+        for (int endingLetter = 1; endingLetter < columns; endingLetter++) {
+          word = "";
+          for (int letter = startingLetter; letter < startingLetter+endingLetter+1; letter++) {
+            if (startingLetter+endingLetter >= columns && letter >= columns) {
+              word = word + ar[row][letter-7];
+            } else {
+              word = word + ar[row][letter];
+            }
+            if (palindrome(word) == true) {
+              System.out.println("words: "+word);
+              System.out.println("PALINDROME FOUND!");
+              for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+                if (startingLetter+charInWord >= columns) {
+                  Arrays.fill(solAr[row],startingLetter+charInWord-7,startingLetter+charInWord+1-7,word.charAt(charInWord));
+                } else {
+                  Arrays.fill(solAr[row],startingLetter+charInWord,startingLetter+charInWord+1,word.charAt(charInWord));
+                }
+              }
+            }
+          }
+        }
+      }
+      System.out.println("new row");
+    }
   }
 }
