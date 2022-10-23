@@ -63,15 +63,19 @@ public class Main
     for (int row = 0; row < lineCount; row++) {
       for (int startingLetter = 0; startingLetter < lineLength; startingLetter++) {
         String word = "";
-        for (int endingLetter = startingLetter+1; endingLetter < lineLength+1; endingLetter++) {
+        for (int endingLetter = 1; endingLetter < lineLength; endingLetter++) {
           word = "";
-          for (int letter = startingLetter; letter < endingLetter; letter++) {
-            word = word + board[row][letter];
-            if (palindrome(word) == true) {
-              System.out.println("words: "+word);
-              System.out.println("PALINDROME FOUND!");
-              for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-                Arrays.fill(solBoard[row],startingLetter+charInWord,startingLetter+charInWord+1,word.charAt(charInWord));
+          for (int letter = startingLetter; letter < endingLetter+1; letter++) {
+            if (startingLetter+endingLetter >= lineLength) {
+              word = word + board[row][letter-6];
+            } else {
+              word = word + board[row][letter];
+              if (palindrome(word) == true) {
+                System.out.println("words: "+word);
+                System.out.println("PALINDROME FOUND!");
+                for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+                  Arrays.fill(solBoard[row],startingLetter+charInWord,startingLetter+charInWord+1,word.charAt(charInWord));
+                }
               }
             }
           }
