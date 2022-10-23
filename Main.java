@@ -50,8 +50,7 @@ public class Main
       lineNumber = lineNumber + 1;
     }
 
-    // creates the 2d array of the solved puzzle board that the program will output
-    // and fills the array with blank spaces
+    // creates the 2d array of the solved puzzle board that the program will output and preemptively fills the array with blank spaces
     char[][] solBoard = new char[lineCount][lineLength];
     for (int row = 0; row < lineCount; row++) {
       for (int column = 0; column < lineLength; column++) {
@@ -60,7 +59,7 @@ public class Main
     }
 
     // searches row by row for horizontal palindromes
-    searchH(lineCount, lineLength, board, solBoard);
+    // searchH(lineCount, lineLength, board, solBoard);
     
     // prints the board for debugging purposes
     for (int ar = 0; ar < lineCount; ar++) {
