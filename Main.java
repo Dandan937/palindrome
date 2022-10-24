@@ -185,20 +185,62 @@ public class Main
 
   public static void searchD(int rows, int columns, char[][] ar, char[][] solAr) {
     /* 
-     * function: searches every element in the 2d puzzle for "positive slope" diagonal palindromes
+     * function: searches every element in the 2d puzzle for "positive slope" and "negative slope" diagonal palindromes
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
      * returns: void (the method *references* the 2d array)
     */
     String word = "";
-    int diagSize = 0;
-    int diagSizeMax = 0;
+    int diagSizeMax;
+    boolean notItselfPS = true; // boolean to keep checking in the "positive slope" direction
+    boolean notItselfNS = true; // boolean to keep checking in the "negative slope" direction
+    int startingPosX = 0;
+    int startingPosY = 0;
+    boolean cIsMax = false;
+    boolean rIsMax = false;
+    int addPos = 0;
+    // records if there are less columns than rows
+    if (rows >= columns) {
+      diagSizeMax = columns;
+      cIsMax = true;
+    // records if there are less rows than columns
+    } else {
+      diagSizeMax = rows;
+      rIsMax = true;
+    }
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
+        // records the position of the starting index in the 2d array
+        startingPosY = row;
+        startingPosX = column;
         word = "";
-        if (rows >= columns) {
-          diagSizeMax = columns;
-        } else {
-          diagSizeMax = rows;
+        // searches for "negative slope" diagonals
+        for (int letter = 0; letter < diagSizeMax; letter++) {
+          while (notItselfNS) {
+            if (startingPosY+letter+addPos >= rows || startingPosX+letter+addPos >= columns) {
+              if (cIsMax) {
+                addPos = addPos - columns;
+              } else if (rIsMax) {
+                addPos = addPos - rows;
+              }
+            }
+            if ((startingPosY+letter+addPos == startingPosY) && (addPos != 0)) {
+              
+            }
+            word = word + ar[row+letter][column+letter];
+          }
+          // if () {
+          // // if (palindrome(word) == true) {
+          // //   System.out.println("words: "+word);
+          // //   System.out.println("PALINDROME FOUND!");
+          // //   for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+          // //     if (startingLetter+charInWord >= rows) {
+          // //       Arrays.fill(solAr[startingLetter+charInWord-rows],column,column+1,word.charAt(charInWord));
+          // //     } else {
+          // //       Arrays.fill(solAr[startingLetter+charInWord],column,column+1,word.charAt(charInWord));
+          // //     }
+          // //   }
+          // // }
+          // }
         }
       }
     }
