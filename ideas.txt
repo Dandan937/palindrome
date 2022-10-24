@@ -1,0 +1,6 @@
+-  you could also go through every char (element) in every array in the 2d array and search for horizontal, vertical, and diagonal palindromes
+
+-  I can get rid of the ending letter as instead of making a string that only goes to the ending letter and submitting that, i can just submit the word as it scans along the line
+;  to do the above ^, i would need to have something like a checkPuzzle() method, and then have the searchH, searchV, searchDUR, and searchDDR methods inside of it
+
+-  

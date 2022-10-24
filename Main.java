@@ -40,15 +40,7 @@ public class Main
     // the leftmost [] is the greatest array and going rightwards the other [] describe the "nested" arrays, with the rightmost [] being the array that has only regular elements
     // creates the 2d array of the puzzle board that the program will work with
     char[][] board = new char[lineCount][lineLength];
-    int lineNumber = 0;
-    while (input.hasNext()) {
-      String inputStr = input.nextLine();
-      noSpaceStr = inputStr.replaceAll(" ", "");
-      for (int element = 0; element < lineLength; element++) {
-        Arrays.fill(board[lineNumber], element, element+1, noSpaceStr.charAt(element));
-      }
-      lineNumber = lineNumber + 1;
-    }
+    noSpaceStr = createWorkingArray(input, noSpaceStr, lineLength, board);
   
     // creates the 2d array of the solved puzzle board that the program will output and preemptively fills the array with blank spaces
     char[][] solBoard = new char[lineCount][lineLength];
@@ -84,6 +76,19 @@ public class Main
     input.close();
   }
 
+  public static String createWorkingArray(Scanner input, String str, int elements, char[][] ar) {
+    int lineNumber = 0;
+    while (input.hasNext()) {
+      String inputStr = input.nextLine();
+      str = inputStr.replaceAll(" ", "");
+      for (int element = 0; element < elements; element++) {
+        Arrays.fill(ar[lineNumber], element, element+1, str.charAt(element));
+      }
+      lineNumber = lineNumber + 1;
+    }
+    return str;
+  }
+
   public static boolean palindrome(String str) {
     /* 
      * function: checks if the string of characters found is a palindrome or not
@@ -111,7 +116,7 @@ public class Main
     /* 
      * function: searches every row of the puzzle for horizontal palindromes; also detects palindromes that wrap around
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
-     * returns: void (the method references the 2d array)
+     * returns: void (the method *references* the 2d array)
     */
     for (int row = 0; row < rows; row++) {
       for (int startingLetter = 0; startingLetter < columns; startingLetter++) {
@@ -146,7 +151,7 @@ public class Main
     /* 
      * function: searches every column of the puzzle for vertical palindromes; also detects palindromes that wrap around
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
-     * returns: void (the method references but does not  the 2d array)
+     * returns: void (the method *references* the 2d array)
     */
     for (int column = 0; column < columns; column++) {
       for (int startingLetter = 0; startingLetter < rows; startingLetter++) {
@@ -177,4 +182,27 @@ public class Main
       System.out.println("new column");
     }
   }
+
+  public static void searchD(int rows, int columns, char[][] ar, char[][] solAr) {
+    /* 
+     * function: searches every element in the 2d puzzle for "positive slope" diagonal palindromes
+     * parameters: int rows, int columns, char[][] ar, char[][] solAr
+     * returns: void (the method *references* the 2d array)
+    */
+    String word = "";
+    int diagSize = 0;
+    int diagSizeMax = 0;
+    for (int row = 0; row < rows; row++) {
+      for (int column = 0; column < columns; column++) {
+        word = "";
+        if (rows >= columns) {
+          diagSizeMax = columns;
+        } else {
+          diagSizeMax = rows;
+        }
+      }
+    }
+  }
+
+  // public static void searchDPS(int lines, int elements, char[][] array, char[][] solArray)
 }
