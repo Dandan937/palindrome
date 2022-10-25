@@ -13,8 +13,7 @@ import java.util.Arrays;
 import java.io.File;
 import java.io.PrintWriter;
 
-public class Main
-{
+public class Main {
   public static void main(String[] args) throws Exception {
     System.out.println("Hello World");
     // initialize objects
@@ -22,7 +21,7 @@ public class Main
     Scanner input2 = new Scanner(puzzle);
     // File updatedPuzzle = new File("updatedPuzzle.txt");
     // PrintWriter output = new PrintWriter(updatedPuzzle);
-  
+
     // store how many lines there are in the puzzle and how long the lines are
     int lineCount = 0;
     int lineLength = 0;
@@ -32,35 +31,38 @@ public class Main
       noSpaceStr = input2.nextLine().replaceAll(" ", "");
       lineLength = noSpaceStr.length();
     }
-    
+
     // restart the scanner stream
     input2.close();
     Scanner input = new Scanner(puzzle);
-    
-    // the leftmost [] is the greatest array and going rightwards the other [] describe the "nested" arrays, with the rightmost [] being the array that has only regular elements
+
+    // the leftmost [] is the greatest array and going rightwards the other []
+    // describe the "nested" arrays, with the rightmost [] being the array that has
+    // only regular elements
     // creates the 2d array of the puzzle board that the program will work with
     char[][] board = new char[lineCount][lineLength];
     noSpaceStr = createWorkingArray(input, noSpaceStr, lineLength, board);
-  
-    // creates the 2d array of the solved puzzle board that the program will output and preemptively fills the array with blank spaces
+
+    // creates the 2d array of the solved puzzle board that the program will output
+    // and preemptively fills the array with blank spaces
     char[][] solBoard = new char[lineCount][lineLength];
     for (int row = 0; row < lineCount; row++) {
       for (int column = 0; column < lineLength; column++) {
-        Arrays.fill(solBoard[row], column, column+1, ' ');
+        Arrays.fill(solBoard[row], column, column + 1, ' ');
       }
     }
-  
+
     // searches row by row for horizontal palindromes
     searchH(lineCount, lineLength, board, solBoard);
-    
+
     // searches column by column for vertical palindromes
     searchV(lineCount, lineLength, board, solBoard);
-    
+
     // prints the board for debugging purposes
     for (int ar = 0; ar < lineCount; ar++) {
       System.out.println(Arrays.toString(board[ar]));
     }
-  
+
     // makes a filler line
     System.out.println("");
     // prints the solution board for debugging purposes
@@ -71,18 +73,24 @@ public class Main
     // // Fill from index 1 to index 4.
     // Arrays.fill(ar, 1, 5, 10);
     // System.out.println(Arrays.toString(ar));
-  
+
     // close the puzzle reader stream
     input.close();
   }
 
   public static String createWorkingArray(Scanner input, String str, int elements, char[][] ar) {
+    /*
+     * function: creates the 2d array that the search methods will be working with
+     * parameters: Scanner input, String str, int elements, char[][] ar
+     * returns: String str
+     */
     int lineNumber = 0;
+    // while the file has a line to be read, takes the line, removes spaces, and stores it in the 2d array according to the line number
     while (input.hasNext()) {
       String inputStr = input.nextLine();
       str = inputStr.replaceAll(" ", "");
       for (int element = 0; element < elements; element++) {
-        Arrays.fill(ar[lineNumber], element, element+1, str.charAt(element));
+        Arrays.fill(ar[lineNumber], element, element + 1, str.charAt(element));
       }
       lineNumber = lineNumber + 1;
     }
@@ -90,53 +98,61 @@ public class Main
   }
 
   public static boolean palindrome(String str) {
-    /* 
+    /*
      * function: checks if the string of characters found is a palindrome or not
      * parameters: String str
      * returns: boolean mirrored
-    */
+     */
     int mirroredness = 0;
     boolean mirrored = false;
+    // the string needs to be at least 3 characters long for it to be considered a palindrome
     if (str.length() >= 3) {
+      // matches the first letter with the last letter, second letter with the penultimate letter, and so on
       for (int letter = 0; letter < str.length(); letter++) {
-        if (str.charAt(letter) == str.charAt(str.length()-letter-1)) {
+        if (str.charAt(letter) == str.charAt(str.length() - letter - 1)) {
           mirroredness = mirroredness + 1;
         }
-        // System.out.print(str.charAt(letter) +" w1 - "+str.charAt(str.length()-letter-1)+" w2 ___ ");
       }
     }
+    // the string length and the # of times the letters correctly match up should be the same
     if (mirroredness == str.length()) {
       mirrored = true;
     }
-    // System.out.println(" "+mirroredness+" "+str.length());
     return mirrored;
   }
 
   public static void searchH(int rows, int columns, char[][] ar, char[][] solAr) {
-    /* 
-     * function: searches every row of the puzzle for horizontal palindromes; also detects palindromes that wrap around
+    /*
+     * function: searches every row of the puzzle for horizontal palindromes; also
+     * detects palindromes that wrap around
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
      * returns: void (the method *references* the 2d array)
-    */
+     */
     for (int row = 0; row < rows; row++) {
       for (int startingLetter = 0; startingLetter < columns; startingLetter++) {
         String word = "";
         for (int endingLetter = 1; endingLetter < columns; endingLetter++) {
           word = "";
-          for (int letter = startingLetter; letter < startingLetter+endingLetter+1; letter++) {
-            if (startingLetter+endingLetter >= columns && letter >= columns) {
-              word = word + ar[row][letter-columns];
+          // adds on every letter in the desired search area to a string
+          for (int letter = startingLetter; letter < startingLetter + endingLetter + 1; letter++) {
+            // if the current position is out of bounds, then wraps it around to be in bounds
+            if (startingLetter + endingLetter >= columns && letter >= columns) {
+              word = word + ar[row][letter - columns];
+            // otherwise, it simply takes the current position's character
             } else {
               word = word + ar[row][letter];
             }
+            // checks if the string is a palindrome
             if (palindrome(word) == true) {
-              System.out.println("words: "+word);
-              System.out.println("PALINDROME FOUND!");
+              System.out.println("PALINDROME FOUND! word: " + word);
               for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-                if (startingLetter+charInWord >= columns) {
-                  Arrays.fill(solAr[row],startingLetter+charInWord-7,startingLetter+charInWord+1-7,word.charAt(charInWord));
+                // adds on the palindrome to the solution board
+                if (startingLetter + charInWord >= columns) {
+                  Arrays.fill(solAr[row], startingLetter + charInWord - 7, startingLetter + charInWord + 1 - 7,
+                      word.charAt(charInWord));
                 } else {
-                  Arrays.fill(solAr[row],startingLetter+charInWord,startingLetter+charInWord+1,word.charAt(charInWord));
+                  Arrays.fill(solAr[row], startingLetter + charInWord, startingLetter + charInWord + 1,
+                      word.charAt(charInWord));
                 }
               }
             }
@@ -148,31 +164,35 @@ public class Main
   }
 
   public static void searchV(int rows, int columns, char[][] ar, char[][] solAr) {
-    /* 
-     * function: searches every column of the puzzle for vertical palindromes; also detects palindromes that wrap around
+    /*
+     * function: searches every column of the puzzle for vertical palindromes; also
+     * detects palindromes that wrap around
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
      * returns: void (the method *references* the 2d array)
-    */
+     */
     for (int column = 0; column < columns; column++) {
       for (int startingLetter = 0; startingLetter < rows; startingLetter++) {
         String word = "";
         for (int endingLetter = 1; endingLetter < rows; endingLetter++) {
           word = "";
-          for (int letter = startingLetter; letter < startingLetter+endingLetter+1; letter++) {
-            if (startingLetter+endingLetter >= rows && letter >= rows) {
-              word = word + ar[letter-rows][column];
+          // adds on every letter in the desired search area to a string
+          for (int letter = startingLetter; letter < startingLetter + endingLetter + 1; letter++) {
+            // if the current position is out of bounds, then wraps it around to be in bounds
+            if (startingLetter + endingLetter >= rows && letter >= rows) {
+              word = word + ar[letter - rows][column];
+            // otherwise, it simply takes the current position's character
             } else {
               word = word + ar[letter][column];
             }
-            System.out.println("before checking, after adding:" + word);
+            // checks if the string is a palindrome
             if (palindrome(word) == true) {
-              System.out.println("words: "+word);
-              System.out.println("PALINDROME FOUND!");
+              System.out.println("PALINDROME FOUND! word: " + word);
               for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-                if (startingLetter+charInWord >= rows) {
-                  Arrays.fill(solAr[startingLetter+charInWord-rows],column,column+1,word.charAt(charInWord));
+                // adds on the palindrome to the solution board
+                if (startingLetter + charInWord >= rows) {
+                  Arrays.fill(solAr[startingLetter + charInWord - rows], column, column + 1, word.charAt(charInWord));
                 } else {
-                  Arrays.fill(solAr[startingLetter+charInWord],column,column+1,word.charAt(charInWord));
+                  Arrays.fill(solAr[startingLetter + charInWord], column, column + 1, word.charAt(charInWord));
                 }
               }
             }
@@ -184,67 +204,89 @@ public class Main
   }
 
   public static void searchD(int rows, int columns, char[][] ar, char[][] solAr) {
-    /* 
-     * function: searches every element in the 2d puzzle for "positive slope" and "negative slope" diagonal palindromes
+    /*
+     * function: searches every element in the 2d puzzle for "positive slope" and
+     * "negative slope" diagonal palindromes
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
      * returns: void (the method *references* the 2d array)
-    */
+     */
     String word = "";
     int diagSizeMax;
     boolean notItselfPS = true; // boolean to keep checking in the "positive slope" direction
     boolean notItselfNS = true; // boolean to keep checking in the "negative slope" direction
-    int startingPosX = 0;
-    int startingPosY = 0;
+    boolean findPSDiagLength = true;
+    boolean findNSDiagLength = true;
     boolean cIsMax = false;
     boolean rIsMax = false;
-    int addPos = 0;
+    int movePos = 0;
     // records if there are less columns than rows
     if (rows >= columns) {
       diagSizeMax = columns;
       cIsMax = true;
-    // records if there are less rows than columns
+      // records if there are less rows than columns
     } else {
       diagSizeMax = rows;
       rIsMax = true;
     }
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
-        // records the position of the starting index in the 2d array
-        startingPosY = row;
-        startingPosX = column;
+        // creates a string to hold the characters 
         word = "";
         // searches for "negative slope" diagonals
+        notItselfNS = true;
         for (int letter = 0; letter < diagSizeMax; letter++) {
-          while (notItselfNS) {
-            if (startingPosY+letter+addPos >= rows || startingPosX+letter+addPos >= columns) {
-              if (cIsMax) {
-                addPos = addPos - columns;
-              } else if (rIsMax) {
-                addPos = addPos - rows;
+          if (notItselfNS) {
+            // if the current position is out of bounds, then it wraps it around to be in bounds
+            if (row + letter + movePos >= rows) {
+              movePos = 0 - (row+letter);
+            } else if (row + letter + movePos >= columns) {
+              movePos = 0 - (row+letter);
+            }
+            // if the current position is also the starting position, then it stops the loop
+            if ((row + letter + movePos == row) && (movePos != 0)
+                /*|| (row == 0 && row == columns - 1)
+                || (row == rows - 1 && row == 0)*/) {
+              notItselfNS = false;
+            }
+            // adds the current position's character to the string if it's not the starting position
+            if (notItselfNS == true) {
+              if (row + letter >= rows || row + letter >= columns) {
+                word = word + ar[row + letter + movePos][column + letter + movePos];
+              } else {
+                word = word + ar[row + letter][column + letter];
               }
             }
-            if ((startingPosY+letter+addPos == startingPosY) && (addPos != 0)) {
-              
+            // checks if the updated string is a palindrome
+            if (palindrome(word) == true) {
+              System.out.println("PALINDROME FOUND! word: " + word);
+              // adds the palindrome to the solution board
+              for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+                // if the palindrome went out of bounds
+                if (row+charInWord >= rows || row + charInWord >= columns) {
+                  Arrays.fill(solAr[row+charInWord+movePos],column+charInWord+movePos,column+charInWord+movePos+1,word.charAt(charInWord));
+                }
+              }
             }
-            word = word + ar[row+letter][column+letter];
           }
-          // if () {
-          // // if (palindrome(word) == true) {
-          // //   System.out.println("words: "+word);
-          // //   System.out.println("PALINDROME FOUND!");
-          // //   for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-          // //     if (startingLetter+charInWord >= rows) {
-          // //       Arrays.fill(solAr[startingLetter+charInWord-rows],column,column+1,word.charAt(charInWord));
-          // //     } else {
-          // //       Arrays.fill(solAr[startingLetter+charInWord],column,column+1,word.charAt(charInWord));
-          // //     }
-          // //   }
-          // // }
-          // }
+        // if () {
+        // // if (palindrome(word) == true) {
+        // // System.out.println("words: "+word);
+        // // System.out.println("PALINDROME FOUND!");
+        // // for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+        // // if (startingLetter+charInWord >= rows) {
+        // //
+        // Arrays.fill(solAr[startingLetter+charInWord-rows],column,column+1,word.charAt(charInWord));
+        // // } else {
+        // //
+        // Arrays.fill(solAr[startingLetter+charInWord],column,column+1,word.charAt(charInWord));
+        // // }
+        // // }
+        // // }
         }
       }
     }
   }
 
-  // public static void searchDPS(int lines, int elements, char[][] array, char[][] solArray)
+  // public static void searchDPS(int lines, int elements, char[][] array,
+  // char[][] solArray)
 }
