@@ -58,6 +58,9 @@ public class Main {
     // searches column by column for vertical palindromes
     searchV(lineCount, lineLength, board, solBoard);
 
+    // searches diagonally for diagonal palindromes
+    searchD(lineCount, lineLength, board, solBoard);
+    
     // prints the board for debugging purposes
     for (int ar = 0; ar < lineCount; ar++) {
       System.out.println(Arrays.toString(board[ar]));
@@ -214,19 +217,13 @@ public class Main {
     int diagSizeMax;
     boolean notItselfPS = true; // boolean to keep checking in the "positive slope" direction
     boolean notItselfNS = true; // boolean to keep checking in the "negative slope" direction
-    boolean findPSDiagLength = true;
-    boolean findNSDiagLength = true;
-    boolean cIsMax = false;
-    boolean rIsMax = false;
     int movePos = 0;
     // records if there are less columns than rows
     if (rows >= columns) {
       diagSizeMax = columns;
-      cIsMax = true;
       // records if there are less rows than columns
     } else {
       diagSizeMax = rows;
-      rIsMax = true;
     }
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
@@ -234,23 +231,22 @@ public class Main {
         word = "";
         // searches for "negative slope" diagonals
         notItselfNS = true;
-        for (int letter = 0; letter < diagSizeMax; letter++) {
+        movePos = 0;
+        for (int letter = 0; letter < diagSizeMax+1; letter++) {
           if (notItselfNS) {
             // if the current position is out of bounds, then it wraps it around to be in bounds
             if (row + letter + movePos >= rows) {
-              movePos = 0 - (row+letter);
-            } else if (row + letter + movePos >= columns) {
+              movePos = 0 - (column+letter);
+            } else if (column + letter + movePos >= columns) {
               movePos = 0 - (row+letter);
             }
             // if the current position is also the starting position, then it stops the loop
-            if ((row + letter + movePos == row) && (movePos != 0)
-                /*|| (row == 0 && row == columns - 1)
-                || (row == rows - 1 && row == 0)*/) {
+            if ((row + letter + movePos == row) && (column + letter + movePos == column) && (movePos != 0)) {
               notItselfNS = false;
             }
             // adds the current position's character to the string if it's not the starting position
             if (notItselfNS == true) {
-              if (row + letter >= rows || row + letter >= columns) {
+              if (row + letter >= rows || column + letter >= columns) {
                 word = word + ar[row + letter + movePos][column + letter + movePos];
               } else {
                 word = word + ar[row + letter][column + letter];
@@ -262,31 +258,16 @@ public class Main {
               // adds the palindrome to the solution board
               for (int charInWord = 0; charInWord < word.length(); charInWord++) {
                 // if the palindrome went out of bounds
-                if (row+charInWord >= rows || row + charInWord >= columns) {
+                if (row + charInWord >= rows || column + charInWord >= columns) {
                   Arrays.fill(solAr[row+charInWord+movePos],column+charInWord+movePos,column+charInWord+movePos+1,word.charAt(charInWord));
+                } else {
+                  Arrays.fill(solAr[row+charInWord],column+charInWord,column+charInWord+1,word.charAt(charInWord));
                 }
               }
             }
           }
-        // if () {
-        // // if (palindrome(word) == true) {
-        // // System.out.println("words: "+word);
-        // // System.out.println("PALINDROME FOUND!");
-        // // for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-        // // if (startingLetter+charInWord >= rows) {
-        // //
-        // Arrays.fill(solAr[startingLetter+charInWord-rows],column,column+1,word.charAt(charInWord));
-        // // } else {
-        // //
-        // Arrays.fill(solAr[startingLetter+charInWord],column,column+1,word.charAt(charInWord));
-        // // }
-        // // }
-        // // }
         }
       }
     }
   }
-
-  // public static void searchDPS(int lines, int elements, char[][] array,
-  // char[][] solArray)
 }
