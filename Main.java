@@ -2,13 +2,12 @@
  * [PalindromeSolver.java]
  * Oct 18 and 24 Array File Methods Assignment - Palindrome Solver
  * @authors: Daniel Liu
- * @version: October 23 2022
+ * @version: October 26 2022
  * @IPO table: https://docs.google.com/document/d/1udfRLSj27_CvNhCJzQYOb741Vf55JOTCILKuykDsvhc/edit?usp=sharing
  */
 
 // import classes
 import java.util.Scanner;
-import java.lang.Math;
 import java.util.Arrays;
 import java.io.File;
 import java.io.PrintWriter;
@@ -19,8 +18,8 @@ public class Main {
     // initialize objects
     File puzzle = new File("PalindromePuzzle.txt");
     Scanner input2 = new Scanner(puzzle);
-    // File updatedPuzzle = new File("updatedPuzzle.txt");
-    // PrintWriter output = new PrintWriter(updatedPuzzle);
+    File updatedPuzzle = new File("PalindromePuzzleSolution.txt");
+    PrintWriter output = new PrintWriter(updatedPuzzle);
 
     // store how many lines there are in the puzzle and how long the lines are
     int lineCount = 0;
@@ -53,32 +52,35 @@ public class Main {
     }
 
     // searches row by row for horizontal palindromes
-    // searchH(lineCount, lineLength, board, solBoard);
+    searchH(lineCount, lineLength, board, solBoard);
 
     // searches column by column for vertical palindromes
-    // searchV(lineCount, lineLength, board, solBoard);
+    searchV(lineCount, lineLength, board, solBoard);
 
     // searches diagonally for diagonal palindromes
     searchD(lineCount, lineLength, board, solBoard);
+
+    for (int line = 0; line < lineCount; line++) {
+      boolean firstChar = true;
+      String solLine = "";
+      String spacedSolLine = "";
+      for (int letter = 0; letter < solBoard[line].length; letter++) {
+        solLine = solLine + solBoard[line][letter];
+      }
+      for (int character = 0; character < solLine.length(); character++) {
+        if (firstChar) {
+          spacedSolLine = "" + solLine.charAt(character);
+          firstChar = false;
+        } else {
+          spacedSolLine = spacedSolLine + " " + solLine.charAt(character);
+        }
+      }
+      output.println(spacedSolLine);
+    }
     
-    // prints the board for debugging purposes
-    for (int ar = 0; ar < lineCount; ar++) {
-      System.out.println(Arrays.toString(board[ar]));
-    }
-
-    // makes a filler line
-    System.out.println("");
-    // prints the solution board for debugging purposes
-    for (int sar = 0; sar < lineCount; sar++) {
-      System.out.println(Arrays.toString(solBoard[sar]));
-    }
-    // int ar[] = new int[]{2, 2, 1, 8, 3, 2, 2, 4, 2};
-    // // Fill from index 1 to index 4.
-    // Arrays.fill(ar, 1, 5, 10);
-    // System.out.println(Arrays.toString(ar));
-
-    // close the puzzle reader stream
+    // close the streams
     input.close();
+    output.close();
   }
 
   public static String createWorkingArray(Scanner input, String str, int elements, char[][] ar) {
@@ -303,7 +305,7 @@ public class Main {
         if ((y - letter + movePos == y) && (x + letter - movePos == x) && (movePos != 0)) {
           notItself = false;
         }
-        System.out.println(notItself);
+
         // adds the current position's character to the string if it's not the starting position
         if (notItself == true) {
           if (y - letter < 0 || x + letter >= elements) {
@@ -312,7 +314,7 @@ public class Main {
             word = word + array[y - letter][x + letter];
           }
         }
-        System.out.println(word);
+
         // checks if the updated string is a palindrome
         if (palindrome(word) == true) {
           System.out.println("PALINDROME FOUND! word: " + word);
