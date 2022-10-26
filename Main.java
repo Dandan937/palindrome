@@ -53,10 +53,10 @@ public class Main {
     }
 
     // searches row by row for horizontal palindromes
-    searchH(lineCount, lineLength, board, solBoard);
+    // searchH(lineCount, lineLength, board, solBoard);
 
     // searches column by column for vertical palindromes
-    searchV(lineCount, lineLength, board, solBoard);
+    // searchV(lineCount, lineLength, board, solBoard);
 
     // searches diagonally for diagonal palindromes
     searchD(lineCount, lineLength, board, solBoard);
@@ -151,7 +151,7 @@ public class Main {
               for (int charInWord = 0; charInWord < word.length(); charInWord++) {
                 // adds on the palindrome to the solution board
                 if (startingLetter + charInWord >= columns) {
-                  Arrays.fill(solAr[row], startingLetter + charInWord - 7, startingLetter + charInWord + 1 - 7,
+                  Arrays.fill(solAr[row], startingLetter + charInWord - columns, startingLetter + charInWord + 1 - columns,
                       word.charAt(charInWord));
                 } else {
                   Arrays.fill(solAr[row], startingLetter + charInWord, startingLetter + charInWord + 1,
@@ -216,8 +216,6 @@ public class Main {
     String word = "";
     int diagSizeMax;
     boolean notItselfPS = true; // boolean to keep checking in the "positive slope" direction
-    boolean notItselfNS = true; // boolean to keep checking in the "negative slope" direction
-    int movePos = 0;
     // records if there are less columns than rows
     if (rows >= columns) {
       diagSizeMax = columns;
@@ -227,47 +225,122 @@ public class Main {
     }
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
-        // creates a string to hold the characters 
-        word = "";
-        // searches for "negative slope" diagonals
-        notItselfNS = true;
-        movePos = 0;
-        for (int letter = 0; letter < diagSizeMax+1; letter++) {
-          if (notItselfNS) {
-            // if the current position is out of bounds, then it wraps it around to be in bounds
-            if (row + letter + movePos >= rows) {
-              movePos = 0 - (column+letter);
-            } else if (column + letter + movePos >= columns) {
-              movePos = 0 - (row+letter);
-            }
-            // if the current position is also the starting position, then it stops the loop
-            if ((row + letter + movePos == row) && (column + letter + movePos == column) && (movePos != 0)) {
-              notItselfNS = false;
-            }
-            // adds the current position's character to the string if it's not the starting position
-            if (notItselfNS == true) {
-              if (row + letter >= rows || column + letter >= columns) {
-                word = word + ar[row + letter + movePos][column + letter + movePos];
-              } else {
-                word = word + ar[row + letter][column + letter];
-              }
-            }
-            // checks if the updated string is a palindrome
-            if (palindrome(word) == true) {
-              System.out.println("PALINDROME FOUND! word: " + word);
-              // adds the palindrome to the solution board
-              for (int charInWord = 0; charInWord < word.length(); charInWord++) {
-                // if the palindrome went out of bounds
-                if (row + charInWord >= rows || column + charInWord >= columns) {
-                  Arrays.fill(solAr[row+charInWord+movePos],column+charInWord+movePos,column+charInWord+movePos+1,word.charAt(charInWord));
-                } else {
-                  Arrays.fill(solAr[row+charInWord],column+charInWord,column+charInWord+1,word.charAt(charInWord));
-                }
-              }
+        // searches for palindromes that have a "negative slope" (down-rightwards or up-leftwards)
+        searchNS(diagSizeMax, row, column, rows, columns, ar, solAr);
+        // searches for palindromes that have a "positive slope" (up-rightwards or down-leftwards)
+        searchPS(diagSizeMax, row, column, rows, columns, ar, solAr);
+      }
+    }
+  }
+
+  public static void searchNS(int maxDiag, int y, int x, int lines, int elements, char[][] array, char [][]solArray) {
+    boolean notItself = true; // boolean to keep checking in the "negative slope" direction
+    int movePos = 0; // will later move the position of the area being searched
+    String word = ""; // creates a string to hold the characters
+    // searches for "negative slope" diagonals
+    for (int letter = 0; letter < maxDiag+1; letter++) {
+      if (notItself) {
+        // if the current position is out of bounds, then it wraps it around to be in bounds
+        if (y + letter + movePos >= lines) {
+          // System.out.println(" _r_ ");
+          movePos = 0 - (x+letter);
+        } else if (x + letter + movePos >= elements) {
+          // System.out.println(" _c_ ");
+          movePos = 0 - (y+letter);
+        }
+        if (movePos < -maxDiag) {
+          movePos = -maxDiag;
+        }
+        
+        // if the current position is also the starting position, then it stops the loop
+        if ((y + letter + movePos == y) && (x + letter + movePos == x) && (movePos != 0)) {
+          notItself = false;
+        }
+        
+        // adds the current position's character to the string if it's not the starting position
+        if (notItself == true) {
+          if (y + letter >= lines || x + letter >= elements) {
+            word = word + array[y + letter + movePos][x + letter + movePos];
+          } else {
+            word = word + array[y + letter][x + letter];
+          }
+        }
+        
+        // checks if the updated string is a palindrome
+        if (palindrome(word) == true) {
+          System.out.println("PALINDROME FOUND! word: " + word);
+          // adds the palindrome to the solution board
+          for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+            // if the palindrome went out of bounds
+            if (y + charInWord >= lines || x + charInWord >= elements) {
+              Arrays.fill(
+                solArray[y+charInWord+movePos],x+charInWord+movePos,
+                x+charInWord+movePos+1,word.charAt(charInWord));
+            } else {
+              Arrays.fill(
+                solArray[y+charInWord],x+charInWord,
+                x+charInWord+1,word.charAt(charInWord));
             }
           }
         }
       }
+      System.out.println("new ns diag");
+    }
+  }
+
+  public static void searchPS(int maxDiag, int y, int x, int lines, int elements, char[][] array, char [][]solArray) {
+    boolean notItself = true; // boolean to keep checking in the "positive slope" direction
+    int movePos = 0; // will later move the position of the area being searched 
+    String word = ""; // creates a string to hold the characters
+    // searches for "positive slope" diagonals
+    for (int letter = 0; letter < maxDiag; letter++) {
+      if (notItself) {
+        // if the current position is out of bounds, then it wraps it around to be in bounds
+        if (y - letter + movePos < 0) {
+          System.out.println(" _r_ " + x + " __ " + y + " __ " + letter + " __ " + movePos);
+          movePos = (x+letter);
+          System.out.println(x + " __ " + y + " __ " + letter + " __ " + movePos);
+        } else if (x + letter - movePos >= elements) {
+          System.out.println(" _c_ " + x + " __ " + y + " __ " + letter + " __ " + movePos);
+          movePos = (x+letter);
+        }
+        if (movePos > maxDiag) {
+          movePos = maxDiag;
+        }
+        
+        // if the current position is also the starting position, then it stops the loop
+        if ((y - letter + movePos == y) && (x + letter - movePos == x) && (movePos != 0)) {
+          notItself = false;
+        }
+        System.out.println(notItself);
+        // adds the current position's character to the string if it's not the starting position
+        if (notItself == true) {
+          if (y - letter < 0 || x + letter >= elements) {
+            word = word + array[y - letter + movePos][x + letter - movePos];
+          } else {
+            word = word + array[y - letter][x + letter];
+          }
+        }
+        System.out.println(word);
+        // checks if the updated string is a palindrome
+        if (palindrome(word) == true) {
+          System.out.println("PALINDROME FOUND! word: " + word);
+          // adds the palindrome to the solution board
+          for (int charInWord = 0; charInWord < word.length(); charInWord++) {
+            // if the palindrome went out of bounds
+            if (y - charInWord < 0 || x + charInWord >= elements) {
+              Arrays.fill(
+                solArray[y-charInWord+movePos],x+charInWord-movePos,
+                x+charInWord-movePos+1,word.charAt(charInWord));
+            } else {
+              Arrays.fill(
+                solArray[y-charInWord],x+charInWord,
+                x+charInWord+1,word.charAt(charInWord));
+            }
+          }
+        }
+      }
+      System.out.println("new ps diag");
     }
   }
 }
