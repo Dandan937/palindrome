@@ -213,10 +213,7 @@ public class Main {
      * parameters: int rows, int columns, char[][] ar, char[][] solAr
      * returns: void (the method *references* the 2d array)
      */
-    String word = "";
     int diagSizeMax;
-    boolean notItselfPS = true; // boolean to keep checking in the "positive slope" direction
-    // records if there are less columns than rows
     if (rows >= columns) {
       diagSizeMax = columns;
       // records if there are less rows than columns
@@ -242,10 +239,8 @@ public class Main {
       if (notItself) {
         // if the current position is out of bounds, then it wraps it around to be in bounds
         if (y + letter + movePos >= lines) {
-          // System.out.println(" _r_ ");
           movePos = 0 - (x+letter);
         } else if (x + letter + movePos >= elements) {
-          // System.out.println(" _c_ ");
           movePos = 0 - (y+letter);
         }
         if (movePos < -maxDiag) {
@@ -284,7 +279,6 @@ public class Main {
           }
         }
       }
-      System.out.println("new ns diag");
     }
   }
 
@@ -293,18 +287,15 @@ public class Main {
     int movePos = 0; // will later move the position of the area being searched 
     String word = ""; // creates a string to hold the characters
     // searches for "positive slope" diagonals
-    for (int letter = 0; letter < maxDiag; letter++) {
+    for (int letter = 0; letter < maxDiag+1; letter++) {
       if (notItself) {
         // if the current position is out of bounds, then it wraps it around to be in bounds
         if (y - letter + movePos < 0) {
-          System.out.println(" _r_ " + x + " __ " + y + " __ " + letter + " __ " + movePos);
-          movePos = (x+letter);
-          System.out.println(x + " __ " + y + " __ " + letter + " __ " + movePos);
+          movePos = x+letter;
         } else if (x + letter - movePos >= elements) {
-          System.out.println(" _c_ " + x + " __ " + y + " __ " + letter + " __ " + movePos);
-          movePos = (x+letter);
+          movePos = ((lines-1)-y)+letter;
         }
-        if (movePos > maxDiag) {
+        if (movePos >= maxDiag) {
           movePos = maxDiag;
         }
         
@@ -340,7 +331,6 @@ public class Main {
           }
         }
       }
-      System.out.println("new ps diag");
     }
   }
 }
