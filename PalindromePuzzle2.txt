@@ -1,7 +1,7 @@
-T Q R S T S O
+T Q R S T S R
 A O D I D T N
 N U P V W A M
 N A Z S X T L
-A B H T P S K
-H H C D W O W
-R I J E F G T
+A B E T P S K
+H R C D W O W
+H I J E F G T
